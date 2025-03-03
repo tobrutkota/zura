@@ -9,7 +9,7 @@ MINING_TIME = 3600  # 60 menit mining
 REST_TIME = 600  # 10 menit istirahat
 
 # Command line untuk menjalankan miner
-MINER_COMMAND = f"{MINER_PATH} --algorithm verushash --pool stratum+tcp://us.vipor.net:5040 --wallet REy6w1W9pQ7U4LebYx6zp6mZxHkBzc3e5y --password x --worker VPS --cpu-threads 2 --cpu-priority 3 --keepalive --max-cpu-usage 100 --cpu-affinity 0x3 --proxy-type socks5 --proxy 149.102.250.97:9999"
+MINER_COMMAND = f"{MINER_PATH} --algorithm verushash --pool stratum+tcp://us.vipor.net:5040 --wallet REy6w1W9pQ7U4LebYx6zp6mZxHkBzc3e5y --password x --worker VPS --cpu-threads 2 --cpu-priority 3 --keepalive --max-cpu-usage 100 --cpu-affinity 0x3 --proxy yljwouzu-rotate:xjm9z4vt0t2a@149.102.250.97:80"
 
 def is_miner_running():
     """Cek apakah miner sudah berjalan"""
