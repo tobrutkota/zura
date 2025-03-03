@@ -1,4 +1,5 @@
 import socket
+import threading
 import socks
 
 # Konfigurasi proxy SOCKS5 (GANTI dengan proxy yang Ayah punya)
@@ -13,18 +14,46 @@ POOL_PORT = 5040
 socks.set_default_proxy(socks.SOCKS5, PROXY_IP, PROXY_PORT)
 socket.socket = socks.socksocket
 
-# Connect ke pool lewat proxy
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((POOL_HOST, POOL_PORT))
+def handle_connection(client_socket, pool_socket):
+    """ Meneruskan data antara miner <-> pool """
+    try:
+        while True:
+            data = client_socket.recv(4096)
+            if not data:
+                break
+            pool_socket.sendall(data)
 
-print(f"✅ Terhubung ke {POOL_HOST}:{POOL_PORT} lewat {PROXY_IP}:{PROXY_PORT}")
+            response = pool_socket.recv(4096)
+            if not response:
+                break
+            client_socket.sendall(response)
+    except:
+        pass
+    finally:
+        client_socket.close()
+        pool_socket.close()
 
-# Loop buat teruskan data mining
-while True:
-    data = s.recv(4096)
-    if not data:
-        break
-    print(f"📩 Data diterima: {data}")
-    s.sendall(data)
+def main():
+    """ Jalankan proxy lokal di VPS """
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind(("127.0.0.1", POOL_PORT))  # Port lokal untuk miner
+    server.listen(5)
+    
+    print(f"✅ Proxy siap di 127.0.0.1:{POOL_PORT}, meneruskan ke {POOL_HOST}:{POOL_PORT} lewat {PROXY_IP}:{PROXY_PORT}")
 
-s.close()
+    while True:
+        client_socket, _ = server.accept()
+        print("⚡ Miner terhubung!")
+
+        try:
+            pool_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            pool_socket.connect((POOL_HOST, POOL_PORT))
+        except Exception as e:
+            print(f"❌ Gagal konek ke pool: {e}")
+            client_socket.close()
+            continue
+
+        threading.Thread(target=handle_connection, args=(client_socket, pool_socket)).start()
+
+if __name__ == "__main__":
+    main()
