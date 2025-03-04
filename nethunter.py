@@ -2,16 +2,18 @@ import socket
 import threading
 import socks
 
-# Konfigurasi proxy SOCKS5 (GANTI dengan proxy yang Ayah punya)
+# Konfigurasi proxy SOCKS5 dengan autentikasi
 PROXY_IP = "149.102.250.97"
 PROXY_PORT = 9999
+PROXY_USER = "yljwouzu-rotate"  # Ganti dengan username proxy
+PROXY_PASS = "xjm9z4vt0t2a"  # Ganti dengan password proxy
 
 # Pool mining tujuan
 POOL_HOST = "us.vipor.net"
 POOL_PORT = 5040
 
-# Buat socket pakai SOCKS5
-socks.set_default_proxy(socks.SOCKS5, PROXY_IP, PROXY_PORT)
+# Set proxy dengan autentikasi
+socks.set_default_proxy(socks.SOCKS5, PROXY_IP, PROXY_PORT, True, PROXY_USER, PROXY_PASS)
 socket.socket = socks.socksocket
 
 def handle_connection(client_socket, pool_socket):
